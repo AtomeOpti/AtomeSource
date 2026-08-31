@@ -16,7 +16,7 @@ Ce dépôt contient le **code source de référence** du client de bureau, publi
   publiquement (voir la section [Pourquoi ça ne compile pas](#pourquoi-ça-ne-compile-pas)).
 - Pour utiliser AtomeOpti, télécharge l'exécutable officiel ici :
 
-  **👉 Télécharger AtomeOpti : [https://TODO-remplace-par-ton-domaine.example/#telecharger](https://atomeopti.github.io/)**
+  **👉 Télécharger AtomeOpti : [https://atomeopti.github.io/]
 
  
 
