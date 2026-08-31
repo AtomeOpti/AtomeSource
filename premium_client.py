@@ -1,7 +1,7 @@
 import requests
 
 # À remplacer par l'URL HTTPS de ton serveur.
-LICENSE_SERVER_URL = "https://atomeopti-license.atomeopti.workers.dev"
+LICENSE_SERVER_URL = ""
 
 
 def activate_premium(key: str) -> tuple[bool, str]:
