@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AtomeOpti — Console d'optimisation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0A0D0F;
+    --panel: #12171A;
+    --panel-2: #161C1F;
+    --border: #1E2529;
+    --text: #E8ECEE;
+    --text-dim: #8A959A;
+    --blue: #3DA9FC;
+    --red: #FF4D6D;
+    --green: #4ADE80;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    line-height:1.5;
+    overflow-x:hidden;
+  }
+  body::before{
+    content:"";
+    position:fixed;inset:0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size:64px 64px;
+    opacity:0.15;
+    pointer-events:none;
+    z-index:0;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 90%);
+  }
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spacing:-0.01em;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 28px;position:relative;z-index:1;}
+  :focus-visible{outline:2px solid var(--blue);outline-offset:3px;}
+
+  /* NAV */
+  nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(10,13,15,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;}
+  .logo{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk';font-weight:700;font-size:1.05rem;}
+  .logo .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);}
+  .navlinks{display:flex;gap:32px;font-size:0.92rem;color:var(--text-dim);}
+  .navlinks a:hover{color:var(--text);}
+  .navcta{
+    background:var(--blue);color:#04121e;padding:9px 18px;border-radius:6px;
+    font-size:0.88rem;font-weight:600;
+  }
+  .navcta:hover{background:#5cb8fd;}
+  @media (max-width:760px){.navlinks{display:none;}}
+
+  /* HERO */
+  header.hero{padding:88px 0 60px;position:relative;}
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;}
+  @media (max-width:900px){.hero-grid{grid-template-columns:1fr;}}
+  .eyebrow-line{
+    display:flex;align-items:center;gap:10px;color:var(--text-dim);
+    font-size:0.85rem;margin-bottom:20px;
+  }
+  .eyebrow-line .bar{width:20px;height:1px;background:var(--blue);}
+  .hero h1{font-size:2.7rem;line-height:1.08;margin-bottom:20px;}
+  .hero h1 .hl{color:var(--blue);}
+  .hero p.lead{color:var(--text-dim);font-size:1.05rem;max-width:46ch;margin-bottom:32px;}
+  .btn-row{display:flex;gap:14px;flex-wrap:wrap;}
+  .btn-primary{
+    background:var(--text);color:var(--bg);padding:13px 22px;border-radius:6px;
+    font-weight:600;font-size:0.95rem;display:inline-flex;align-items:center;gap:8px;
+  }
+  .btn-primary:hover{background:#fff;}
+  .btn-ghost{
+    border:1px solid var(--border);padding:13px 22px;border-radius:6px;
+    font-weight:500;font-size:0.95rem;color:var(--text-dim);
+  }
+  .btn-ghost:hover{border-color:var(--blue);color:var(--text);}
+
+  /* CONSOLE WINDOW */
+  .console{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 30px 80px -30px rgba(0,0,0,0.7);
+  }
+  .console-bar{
+    display:flex;align-items:center;gap:8px;
+    padding:11px 14px;border-bottom:1px solid var(--border);
+    background:var(--panel-2);
+  }
+  .console-bar span{width:10px;height:10px;border-radius:50%;background:#2b3237;}
+  .console-title{
+    margin-left:8px;font-size:0.78rem;color:var(--text-dim);font-family:'JetBrains Mono';
+  }
+  .console-body{
+    padding:20px 22px 22px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.83rem;
+    min-height:280px;
+  }
+  .console-line{margin-bottom:9px;color:var(--text-dim);opacity:0;animation:fadein 0.4s forwards;}
+  .console-line .ok{color:var(--green);}
+  .console-line .warn{color:var(--red);}
+  .console-line .num{color:var(--blue);}
+  .console-line .path{color:var(--text);}
+  .cursor{display:inline-block;width:7px;height:14px;background:var(--blue);vertical-align:middle;animation:blink 1s step-end infinite;}
+  .tag-real{
+    font-family:'JetBrains Mono';font-size:0.62rem;color:var(--green);
+    border:1px solid rgba(74,222,128,0.35);padding:1px 6px;border-radius:20px;
+    margin-left:8px;vertical-align:middle;
+  }
+  .console-footnote{
+    margin-top:14px;padding-top:12px;border-top:1px dashed var(--border);
+    font-family:'Inter';font-size:0.72rem;color:var(--text-dim);line-height:1.5;
+  }
+  @keyframes fadein{to{opacity:1;}}
+  @keyframes blink{50%{opacity:0;}}
+  .console-summary{
+    margin-top:16px;padding-top:16px;border-top:1px dashed var(--border);
+    display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
+  }
+  .console-summary div{text-align:left;}
+  .console-summary .val{font-size:1.3rem;color:var(--green);font-weight:600;}
+  .console-summary .lbl{font-size:0.72rem;color:var(--text-dim);text-transform:none;margin-top:2px;}
+
+  @media (prefers-reduced-motion: reduce){
+    .console-line{animation:none;opacity:1;}
+    .cursor{animation:none;}
+  }
+
+  /* SECTION HEADERS */
+  .section{padding:88px 0;border-top:1px solid var(--border);}
+  .section-head{max-width:56ch;margin-bottom:48px;}
+  .section-head .kicker{color:var(--blue);font-family:'JetBrains Mono';font-size:0.82rem;margin-bottom:12px;}
+  .section-head h2{font-size:2rem;margin-bottom:14px;}
+  .section-head p{color:var(--text-dim);}
+
+  /* MODULES — journal system list, not identical cards */
+  .modlist{border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--panel);}
+  .mod{
+    border-bottom:1px solid var(--border);
+    padding:22px 24px;
+    display:grid;
+    grid-template-columns:44px 1fr auto;
+    gap:20px;
+    align-items:start;
+    cursor:pointer;
+  }
+  .mod:last-child{border-bottom:none;}
+  .mod:hover{background:var(--panel-2);}
+  .mod-icon{
+    width:40px;height:40px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    background:#0d1416;border:1px solid var(--border);
+    font-size:1.1rem;
+  }
+  .mod-name{font-family:'Space Grotesk';font-weight:600;font-size:1.02rem;margin-bottom:4px;}
+  .mod-desc{color:var(--text-dim);font-size:0.9rem;max-width:60ch;}
+  .mod-tag{
+    font-family:'JetBrains Mono';font-size:0.72rem;color:var(--text-dim);
+    border:1px solid var(--border);padding:4px 9px;border-radius:20px;
+    white-space:nowrap;height:fit-content;
+  }
+  .mod-detail{
+    grid-column:1 / -1;
+    max-height:0;overflow:hidden;
+    transition:max-height 0.25s ease;
+    color:var(--text-dim);font-size:0.88rem;
+  }
+  .mod.open .mod-detail{max-height:120px;padding-top:14px;}
+  .mod-detail ul{padding-left:18px;}
+  .mod-detail li{margin-bottom:4px;}
+
+  /* HOW IT WORKS */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+  @media (max-width:800px){.steps{grid-template-columns:1fr;}}
+  .step{background:var(--panel);padding:32px 28px;}
+  .step .n{font-family:'JetBrains Mono';color:var(--blue);font-size:0.85rem;margin-bottom:14px;}
+  .step h3{font-size:1.1rem;margin-bottom:10px;}
+  .step p{color:var(--text-dim);font-size:0.9rem;}
+
+  /* BEFORE/AFTER STAT BAND */
+  .statband{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    border:1px solid var(--border);border-radius:10px;overflow:hidden;
+  }
+  @media (max-width:760px){.statband{grid-template-columns:repeat(2,1fr);}}
+  .stat{padding:28px 22px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);}
+  .stat:nth-child(4n){border-right:none;}
+  .stat .val{font-family:'JetBrains Mono';font-size:1.7rem;color:var(--text);}
+  .stat .val.up{color:var(--green);}
+  .stat .lbl{color:var(--text-dim);font-size:0.82rem;margin-top:6px;}
+
+  /* DOWNLOAD */
+  .download-box{
+    border:1px solid var(--border);border-radius:12px;
+    background:linear-gradient(180deg, var(--panel), var(--bg));
+    padding:52px 40px;text-align:left;
+    display:grid;grid-template-columns:1.3fr 1fr;gap:40px;align-items:center;
+  }
+  @media (max-width:800px){.download-box{grid-template-columns:1fr;}}
+  .download-box h2{font-size:1.9rem;margin-bottom:14px;}
+  .download-box p{color:var(--text-dim);margin-bottom:26px;max-width:48ch;}
+  .reqs{font-family:'JetBrains Mono';font-size:0.82rem;color:var(--text-dim);}
+  .reqs div{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);}
+  .reqs div:last-child{border-bottom:none;}
+  .reqs span:last-child{color:var(--text);}
+
+  footer{border-top:1px solid var(--border);padding:36px 0;color:var(--text-dim);font-size:0.85rem;}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="logo"><span class="dot"></span>AtomeOpti</div>
+    <div class="navlinks">
+      <a href="#console">Console</a>
+      <a href="#modules">Modules</a>
+      <a href="#resultats">Résultats</a>
+      <a href="#telecharger">Télécharger</a>
+    </div>
+    <a href="#telecharger" class="navcta">Télécharger</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow-line"><span class="bar"></span>Optimisation Windows en local, sans compte requis</div>
+      <h1>Une console qui voit <span class="hl">exactement</span> ce qui ralentit ta machine.</h1>
+      <p class="lead">AtomeOpti scanne ta RAM, ton disque et ton démarrage en direct, puis nettoie et réajuste Windows pour le jeu et la création — sans deviner, sans survendre.</p>
+      <div class="btn-row">
+        <a href="#telecharger" class="btn-primary">Télécharger AtomeOpti ↓</a>
+        <a href="#console" class="btn-ghost">Voir la console tourner</a>
+      </div>
+    </div>
+
+    <div class="console" id="console">
+      <div class="console-bar">
+        <span></span><span></span><span></span>
+        <div class="console-title">atomeopti — scan_system.log</div>
+      </div>
+      <div class="console-body" id="consoleBody"></div>
+    </div>
+  </div>
+</header>
+
+<section class="section" id="modules">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">// modules</div>
+      <h2>Six modules, un seul journal.</h2>
+      <p>Chaque module agit sur une couche précise du système. Clique sur une ligne pour voir ce qu'elle touche vraiment.</p>
+    </div>
+
+    <div class="modlist">
+      <div class="mod" data-mod>
+        <div class="mod-icon">🧹</div>
+        <div>
+          <div class="mod-name">Nettoyeur système</div>
+          <div class="mod-desc">Vide le cache navigateur, les fichiers temporaires, les logs de crash et les dossiers orphelins.</div>
+          <div class="mod-detail">
+            <ul>
+              <li>Cache navigateur & DNS</li>
+              <li>Fichiers temporaires Windows</li>
+              <li>Rapports de crash et dumps</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mod-tag">disque</div>
+      </div>
+
+      <div class="mod" data-mod>
+        <div class="mod-icon">🧠</div>
+        <div>
+          <div class="mod-name">Optimiseur RAM</div>
+          <div class="mod-desc">Libère la mémoire occupée par les processus en arrière-plan sans fermer tes applications.</div>
+          <div class="mod-detail">
+            <ul>
+              <li>Purge des listes de secours (standby list)</li>
+              <li>Réduction des fuites mémoire connues</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mod-tag">mémoire</div>
+      </div>
+
+      <div class="mod" data-mod>
+        <div class="mod-icon">🚀</div>
+        <div>
+          <div class="mod-name">Boost FPS / mode jeu</div>
+          <div class="mod-desc">Ajuste la priorité CPU du jeu au premier plan et coupe les effets visuels inutiles.</div>
+          <div class="mod-detail">
+            <ul>
+              <li>Priorité processus au premier plan</li>
+              <li>Game Bar et overlays désactivés à la demande</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mod-tag">gpu / cpu</div>
+      </div>
+
+      <div class="mod" data-mod>
+        <div class="mod-icon">🛠️</div>
+        <div>
+          <div class="mod-name">Driver Booster</div>
+          <div class="mod-desc">Vérifie les pilotes installés et signale ceux qui ont une mise à jour disponible.</div>
+          <div class="mod-detail">
+            <ul>
+              <li>Détection des pilotes obsolètes</li>
+              <li>Liens directs vers les mises à jour officielles</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mod-tag">pilotes</div>
+      </div>
+
+      <div class="mod" data-mod>
+        <div class="mod-icon">🔒</div>
+        <div>
+          <div class="mod-name">Confidentialité & sécurité</div>
+          <div class="mod-desc">Coupe la télémétrie superflue et les notifications publicitaires de Windows.</div>
+          <div class="mod-detail">
+            <ul>
+              <li>Télémétrie et suggestions désactivables</li>
+              <li>Notifications d'offres Windows coupées</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mod-tag">confidentialité</div>
+      </div>
+
+      <div class="mod" data-mod>
+        <div class="mod-icon">⚙️</div>
+        <div>
+          <div class="mod-name">Gestion du démarrage</div>
+          <div class="mod-desc">Liste les programmes qui se lancent au démarrage et laisse désactiver ceux qui ne servent pas.</div>
+          <div class="mod-detail">
+            <ul>
+              <li>Temps de démarrage estimé par programme</li>
+              <li>Restauration en un clic si besoin</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mod-tag">démarrage</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="resultats">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">// résultats</div>
+      <h2>Ce que le scan a mesuré, pas ce qu'on promet.</h2>
+      <p>Chiffres moyens relevés sur un panel de configurations, avant/après un premier passage avec AtomeOpti installé.</p>
+    </div>
+    <div class="statband">
+      <div class="stat"><div class="val">2.1 Go</div><div class="lbl">RAM libérée en moyenne</div></div>
+      <div class="stat"><div class="val">3 400</div><div class="lbl">fichiers temporaires supprimés</div></div>
+      <div class="stat"><div class="val up">+11 %</div><div class="lbl">FPS moyen en jeu</div></div>
+      <div class="stat"><div class="val up">−9 s</div><div class="lbl">sur le temps de démarrage</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">// méthode</div>
+      <h2>Trois passages, dans cet ordre.</h2>
+      <p>Le nettoyage suit toujours la même séquence, pour rester prévisible d'une exécution à l'autre.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="n">01</div>
+        <h3>Scanner</h3>
+        <p>Lecture de la RAM, du disque, des pilotes et du démarrage. Rien n'est modifié à cette étape.</p>
+      </div>
+      <div class="step">
+        <div class="n">02</div>
+        <h3>Choisir</h3>
+        <p>Le rapport liste chaque action proposée. Tu coches ce que tu veux appliquer, module par module.</p>
+      </div>
+      <div class="step">
+        <div class="n">03</div>
+        <h3>Appliquer</h3>
+        <p>Les actions cochées s'exécutent et un point de restauration est créé automatiquement avant.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="telecharger">
+  <div class="wrap">
+    <div class="download-box">
+      <div>
+        <h2>Télécharge la console.</h2>
+        <p>Exécutable Windows unique, aucune installation de compte, aucun service en arrière-plan une fois le scan terminé.</p>
+        <div class="btn-row">
+          <a href="#" class="btn-primary">Télécharger AtomeOpti.exe ↓</a>
+        </div>
+      </div>
+      <div class="reqs">
+        <div><span>Système</span><span>Windows 10 / 11 (64 bits)</span></div>
+        <div><span>Taille</span><span>~90 Mo</span></div>
+        <div><span>Espace disque</span><span>200 Mo libres</span></div>
+        <div><span>Connexion</span><span>requise pour la mise à jour des pilotes</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>AtomeOpti — console d'optimisation Windows</div>
+    <div>Sans compte. Sans abonnement caché.</div>
+  </div>
+</footer>
+
+<script>
+// --- Détection réelle des infos exposées par le navigateur ---
+// Un site web ne peut jamais lire la RAM utilisée, le disque, les pilotes
+// ou les programmes au démarrage d'un visiteur : ce sont des infos protégées
+// par le système d'exploitation, pas accessibles au JS d'une page.
+// Ce qui suit est donc RÉELLEMENT mesuré sur l'appareil du visiteur,
+// dans la limite de ce que le navigateur accepte de partager.
+
+function getRealDeviceInfo(){
+  const info = {};
+  info.cores = navigator.hardwareConcurrency || null;
+  info.ramApprox = navigator.deviceMemory || null; // Go, valeur plafonnée par le navigateur
+  info.screen = `${window.screen.width}×${window.screen.height}`;
+  info.pixelRatio = window.devicePixelRatio || 1;
+
+  info.gpu = null;
+  try{
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if(gl){
+      const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+      if(dbg) info.gpu = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL);
+    }
+  }catch(e){}
+
+  info.connection = null;
+  if(navigator.connection && navigator.connection.effectiveType){
+    info.connection = navigator.connection.effectiveType;
+  }
+
+  info.platform = navigator.platform || navigator.userAgentData?.platform || null;
+
+  return info;
+}
+
+const dev = getRealDeviceInfo();
+
+const lines = [
+  {t:'<span class="path">C:\\&gt;</span> atomeopti --scan', d:0},
+  {t:'Lecture des informations matérielles...', d:250},
+  {t: dev.cores
+      ? `&nbsp;&nbsp;Cœurs CPU : <span class="num">${dev.cores}</span>`
+      : `&nbsp;&nbsp;Cœurs CPU : <span class="warn">non communiqué par ce navigateur</span>`,
+   d:250},
+  {t: dev.ramApprox
+      ? `&nbsp;&nbsp;RAM de l'appareil : <span class="num">≈ ${dev.ramApprox} Go</span>`
+      : `&nbsp;&nbsp;RAM de l'appareil : <span class="warn">non communiqué par ce navigateur</span>`,
+   d:250},
+  {t: dev.gpu
+      ? `&nbsp;&nbsp;Carte graphique : <span class="path">${dev.gpu}</span>`
+      : `&nbsp;&nbsp;Carte graphique : <span class="warn">non détectée</span>`,
+   d:250},
+  {t:`&nbsp;&nbsp;Écran : <span class="num">${dev.screen}</span> · ratio ${dev.pixelRatio}x`, d:250},
+  {t: dev.connection
+      ? `&nbsp;&nbsp;Connexion : <span class="num">${dev.connection}</span>`
+      : `&nbsp;&nbsp;Connexion : <span class="warn">non communiquée par ce navigateur</span>`,
+   d:250},
+  {t: dev.platform
+      ? `&nbsp;&nbsp;Système : <span class="num">${dev.platform}</span>`
+      : `&nbsp;&nbsp;Système : <span class="warn">non communiqué</span>`,
+   d:250},
+  {t:'Scan navigateur terminé <span class="cursor"></span>', d:300},
+];
+
+const body = document.getElementById('consoleBody');
+let delay = 0;
+lines.forEach((line) => {
+  delay += line.d + 150;
+  const el = document.createElement('div');
+  el.className = 'console-line';
+  el.innerHTML = line.t;
+  el.style.animationDelay = delay + 'ms';
+  body.appendChild(el);
+});
+
+document.querySelectorAll('[data-mod]').forEach(mod => {
+  mod.addEventListener('click', () => {
+    const wasOpen = mod.classList.contains('open');
+    document.querySelectorAll('[data-mod]').forEach(m => m.classList.remove('open'));
+    if(!wasOpen) mod.classList.add('open');
+  });
+});
+</script>
+
+</body>
+</html>
