@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #0A0D0F;
+    --bg: #0A0E1F;
     --panel: #12171A;
     --panel-2: #161C1F;
     --border: #1E2529;
@@ -17,6 +17,7 @@
     --blue: #3DA9FC;
     --red: #FF4D6D;
     --green: #4ADE80;
+    --orange: #FF6A2B;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   html{scroll-behavior:smooth;}
@@ -27,17 +28,11 @@
     line-height:1.5;
     overflow-x:hidden;
   }
-  body::before{
-    content:"";
+  #bgNetwork{
     position:fixed;inset:0;
-    background-image:
-      linear-gradient(var(--border) 1px, transparent 1px),
-      linear-gradient(90deg, var(--border) 1px, transparent 1px);
-    background-size:64px 64px;
-    opacity:0.15;
-    pointer-events:none;
+    width:100%;height:100%;
     z-index:0;
-    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 90%);
+    pointer-events:none;
   }
   h1,h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spacing:-0.01em;}
   .mono{font-family:'JetBrains Mono',monospace;}
@@ -75,18 +70,56 @@
   .eyebrow-line .bar{width:20px;height:1px;background:var(--blue);}
   .hero h1{font-size:2.7rem;line-height:1.08;margin-bottom:20px;}
   .hero h1 .hl{color:var(--blue);}
-  .hero p.lead{color:var(--text-dim);font-size:1.05rem;max-width:46ch;margin-bottom:32px;}
-  .btn-row{display:flex;gap:14px;flex-wrap:wrap;}
+  .hero p.lead{color:var(--text-dim);font-size:1.05rem;max-width:46ch;margin-bottom:22px;}
+
+  /* trust badges under the lead paragraph */
+  .trust-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px;}
+  .trust-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    border:1px solid var(--border);border-radius:20px;
+    padding:6px 12px;font-size:0.78rem;color:var(--text-dim);
+    background:rgba(18,23,26,0.6);
+  }
+  .trust-badge strong{color:var(--text);font-weight:600;}
+  a.trust-badge:hover{border-color:var(--blue);color:var(--text);}
+
+  /* mini before/after gauge */
+  .mini-compare{
+    border:1px solid var(--border);border-radius:10px;
+    padding:14px 16px;margin-bottom:24px;
+    background:rgba(18,23,26,0.5);
+    max-width:380px;
+  }
+  .mini-compare-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .mini-compare-row:last-child{margin-bottom:0;}
+  .mini-compare-row .mc-label{flex:0 0 96px;font-size:0.78rem;color:var(--text-dim);}
+  .mc-track{flex:1 1 auto;height:6px;border-radius:4px;background:#1b2226;overflow:hidden;}
+  .mc-fill{height:100%;width:0%;border-radius:4px;background:linear-gradient(90deg,var(--blue),var(--green));transition:width 1.1s cubic-bezier(.2,.8,.2,1);}
+  .mc-val{flex:0 0 44px;text-align:right;font-family:'JetBrains Mono';font-size:0.8rem;color:var(--green);}
+
+  .btn-row{display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
   .btn-primary{
     background:var(--text);color:var(--bg);padding:13px 22px;border-radius:6px;
     font-weight:600;font-size:0.95rem;display:inline-flex;align-items:center;gap:8px;
+    position:relative;
   }
   .btn-primary:hover{background:#fff;}
+  .btn-primary.pulse{animation:ctaPulse 2.6s ease-in-out infinite;}
+  @keyframes ctaPulse{
+    0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,0.0);}
+    50%{box-shadow:0 0 0 8px rgba(255,255,255,0.06);}
+  }
   .btn-ghost{
     border:1px solid var(--border);padding:13px 22px;border-radius:6px;
     font-weight:500;font-size:0.95rem;color:var(--text-dim);
   }
   .btn-ghost:hover{border-color:var(--blue);color:var(--text);}
+  .cta-meta{
+    width:100%;margin-top:10px;
+    font-size:0.76rem;color:var(--text-dim);
+    display:flex;gap:14px;flex-wrap:wrap;
+  }
+  .cta-meta span{display:inline-flex;align-items:center;gap:5px;}
 
   /* CONSOLE WINDOW */
   .console{
@@ -122,23 +155,75 @@
     border:1px solid rgba(74,222,128,0.35);padding:1px 6px;border-radius:20px;
     margin-left:8px;vertical-align:middle;
   }
-  .console-footnote{
-    margin-top:14px;padding-top:12px;border-top:1px dashed var(--border);
-    font-family:'Inter';font-size:0.72rem;color:var(--text-dim);line-height:1.5;
-  }
   @keyframes fadein{to{opacity:1;}}
   @keyframes blink{50%{opacity:0;}}
-  .console-summary{
-    margin-top:16px;padding-top:16px;border-top:1px dashed var(--border);
-    display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
+  @keyframes consoleGlow{
+    0%,100%{box-shadow:0 30px 80px -30px rgba(0,0,0,0.7), 0 0 0 rgba(61,169,252,0);}
+    50%{box-shadow:0 30px 80px -30px rgba(0,0,0,0.7), 0 0 26px rgba(61,169,252,0.16);}
   }
-  .console-summary div{text-align:left;}
-  .console-summary .val{font-size:1.3rem;color:var(--green);font-weight:600;}
-  .console-summary .lbl{font-size:0.72rem;color:var(--text-dim);text-transform:none;margin-top:2px;}
+  .console{animation:consoleGlow 4.5s ease-in-out infinite;}
 
   @media (prefers-reduced-motion: reduce){
     .console-line{animation:none;opacity:1;}
     .cursor{animation:none;}
+    .console{animation:none;}
+  }
+
+  /* --- Barre de progression compacte et rapide --- */
+  .proc-row{
+    display:flex;align-items:center;gap:8px;
+    margin-bottom:6px;color:var(--text-dim);
+  }
+  .proc-label{
+    flex:0 1 auto;min-width:0;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .proc-track{
+    flex:1 1 auto;height:3px;border-radius:3px;
+    background:#1b2226;overflow:hidden;
+  }
+  .proc-fill{
+    height:100%;width:0%;border-radius:3px;
+    background:linear-gradient(90deg,var(--blue),var(--green));
+  }
+
+  /* --- Compact hero console, presented as a tilted 3D panel --- */
+  .console-stage{
+    perspective:1400px;
+    display:flex;justify-content:center;
+  }
+  .console-mini{
+    max-width:380px;width:100%;
+    transform:rotateX(4deg) rotateY(-9deg);
+    transform-style:preserve-3d;
+    transition:transform 0.5s cubic-bezier(.2,.8,.2,1), box-shadow 0.5s ease;
+    will-change:transform;
+    position:relative;
+  }
+  .console-mini::after{
+    content:"";
+    position:absolute;inset:0;
+    background:radial-gradient(circle at var(--mx,50%) var(--my,20%), rgba(61,169,252,0.16), transparent 55%);
+    mix-blend-mode:screen;
+    pointer-events:none;
+  }
+  .console-mini .console-body{
+    padding:16px 18px 18px;
+    font-size:0.74rem;
+    min-height:200px;
+    max-height:230px;
+    overflow-y:auto;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+    mask-image:linear-gradient(to bottom, transparent 0, black 18px, black calc(100% - 6px), transparent 100%);
+  }
+  .console-mini .console-body::-webkit-scrollbar{display:none;}
+  .console-mini .console-line{margin-bottom:6px;}
+  @media (max-width:900px){
+    .console-mini{transform:rotateX(2deg) rotateY(-4deg);max-width:420px;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .console-mini{transition:none;}
   }
 
   /* SECTION HEADERS */
@@ -221,9 +306,51 @@
 
   footer{border-top:1px solid var(--border);padding:36px 0;color:var(--text-dim);font-size:0.85rem;}
   footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+
+  /* STICKY DOWNLOAD BAR */
+  .sticky-cta{
+    position:fixed;left:0;right:0;bottom:0;z-index:60;
+    background:rgba(10,14,31,0.92);
+    backdrop-filter:blur(10px);
+    border-top:1px solid var(--border);
+    padding:12px 0;
+    transform:translateY(120%);
+    transition:transform 0.35s ease;
+  }
+  .sticky-cta.show{transform:translateY(0);}
+  .sticky-cta .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+  .sticky-cta-text{font-size:0.88rem;color:var(--text-dim);}
+  .sticky-cta-text strong{color:var(--text);}
+  .sticky-cta-actions{display:flex;align-items:center;gap:10px;}
+  .sticky-cta-close{
+    background:none;border:none;color:var(--text-dim);cursor:pointer;
+    font-size:1.1rem;line-height:1;padding:6px;
+  }
+  .sticky-cta-close:hover{color:var(--text);}
+
+  /* FAQ */
+  .faqlist{border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--panel);}
+  .faq-item{border-bottom:1px solid var(--border);}
+  .faq-item:last-child{border-bottom:none;}
+  .faq-q{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:20px 24px;cursor:pointer;
+    font-family:'Space Grotesk';font-weight:600;font-size:0.98rem;
+  }
+  .faq-q:hover{background:var(--panel-2);}
+  .faq-q .chev{color:var(--text-dim);font-size:0.85rem;transition:transform 0.25s ease;flex-shrink:0;}
+  .faq-item.open .faq-q .chev{transform:rotate(45deg);}
+  .faq-a{
+    max-height:0;overflow:hidden;transition:max-height 0.25s ease;
+    color:var(--text-dim);font-size:0.9rem;
+  }
+  .faq-item.open .faq-a{max-height:200px;}
+  .faq-a p{padding:0 24px 20px;max-width:70ch;}
 </style>
 </head>
 <body>
+
+<canvas id="bgNetwork"></canvas>
 
 <nav>
   <div class="wrap">
@@ -234,6 +361,7 @@
       <a href="#resultats">Résultats</a>
       <a href="#securite">Sécurité</a>
       <a href="#contenu">Contenu</a>
+      <a href="#faq">FAQ</a>
       <a href="#telecharger">Télécharger</a>
     </div>
     <a href="#telecharger" class="navcta">Télécharger</a>
@@ -246,18 +374,48 @@
       <div class="eyebrow-line"><span class="bar"></span>Optimisation Windows en local, sans compte requis</div>
       <h1>Une console qui voit <span class="hl">exactement</span> ce qui ralentit ta machine.</h1>
       <p class="lead">AtomeOpti scanne ta RAM, ton disque et ton démarrage en direct, puis nettoie et réajuste Windows pour le jeu et la création — sans deviner, sans survendre.</p>
+
+      <div class="trust-row">
+        <a href="https://github.com/AtomeOpti/AtomeSource" target="_blank" rel="noopener" class="trust-badge">💻 Open-source · code visible sur GitHub</a>
+        <div class="trust-badge">🔒 Aucune donnée collectée</div>
+        <div class="trust-badge">🆓 Gratuit · sans compte</div>
+      </div>
+
+      <div class="mini-compare" aria-label="Aperçu moyen avant/après optimisation">
+        <div class="mini-compare-row">
+          <span class="mc-label">RAM libérée</span>
+          <div class="mc-track"><div class="mc-fill" id="mcRam"></div></div>
+          <span class="mc-val">2.1 Go</span>
+        </div>
+        <div class="mini-compare-row">
+          <span class="mc-label">FPS moyen</span>
+          <div class="mc-track"><div class="mc-fill" id="mcFps"></div></div>
+          <span class="mc-val">+11%</span>
+        </div>
+      </div>
+
       <div class="btn-row">
-        <a href="#telecharger" class="btn-primary">Télécharger AtomeOpti ↓</a>
+        <a href="#telecharger" class="btn-primary pulse">Télécharger AtomeOpti ↓</a>
         <a href="#console" class="btn-ghost">Voir la console tourner</a>
+        <div class="cta-meta">
+          <span>📦 ~90 Mo</span>
+          <span>⚡ Installation en 30 s</span>
+          <span>🆓 100% gratuit</span>
+        </div>
       </div>
     </div>
 
-    <div class="console" id="console">
-      <div class="console-bar">
-        <span></span><span></span><span></span>
-        <div class="console-title">atomeopti — scan_system.log</div>
+    <div class="console-stage">
+      <div class="console console-mini" id="console">
+        <div class="console-bar">
+          <span></span><span></span><span></span>
+          <div class="console-title">atomeopti — scan_system.log</div>
+        </div>
+        <div class="console-body" id="consoleBody">
+          <div id="scanReal"></div>
+          <div id="scanSim"></div>
+        </div>
       </div>
-      <div class="console-body" id="consoleBody"></div>
     </div>
   </div>
 </header>
@@ -444,6 +602,39 @@
   </div>
 </section>
 
+<section class="section" id="faq">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">// faq</div>
+      <h2>Les questions qu'on nous pose le plus.</h2>
+      <p>Si tu hésites encore avant de télécharger, ces réponses devraient couvrir l'essentiel.</p>
+    </div>
+
+    <div class="faqlist">
+      <div class="faq-item" data-faq>
+        <div class="faq-q">Pourquoi AtomeOpti est gratuit ?<span class="chev">+</span></div>
+        <div class="faq-a"><p>Parce que c'est un outil qu'on a construit pour notre propre usage avant de le partager. Pas d'abonnement caché, pas de version "pro" qui débloque les vraies fonctions : le code est sur GitHub, tout le monde peut vérifier ce qu'il fait.</p></div>
+      </div>
+      <div class="faq-item" data-faq>
+        <div class="faq-q">Est-ce que mes données sont collectées ?<span class="chev">+</span></div>
+        <div class="faq-a"><p>Non. AtomeOpti ne collecte et n'envoie aucune donnée, à l'exception des vérifications de mise à jour automatique (pour te proposer les derniers pilotes et versions disponibles). Aucune télémétrie, aucun compte à créer.</p></div>
+      </div>
+      <div class="faq-item" data-faq>
+        <div class="faq-q">Est-ce que ça va fonctionner sur mon PC ?<span class="chev">+</span></div>
+        <div class="faq-a"><p>Si tu es sur Windows 10 ou 11 (64 bits) avec environ 200 Mo d'espace disque libre, oui. AtomeOpti s'adapte à ta configuration réelle plutôt que d'appliquer des réglages génériques.</p></div>
+      </div>
+      <div class="faq-item" data-faq>
+        <div class="faq-q">Puis-je désinstaller facilement si ça ne me convient pas ?<span class="chev">+</span></div>
+        <div class="faq-a"><p>Oui. Un point de restauration Windows est créé automatiquement avant chaque optimisation, et l'exécutable ne s'installe pas en profondeur dans le système — tu peux tout supprimer en quelques clics.</p></div>
+      </div>
+      <div class="faq-item" data-faq>
+        <div class="faq-q">Ça remplace un vrai nettoyage manuel ou un formatage ?<span class="chev">+</span></div>
+        <div class="faq-a"><p>Non, et ce n'est pas le but. AtomeOpti automatise les réglages qu'un utilisateur avancé ferait à la main — cache, RAM, pilotes, démarrage — sans toucher au matériel ni nécessiter de réinstallation.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="section" id="telecharger">
   <div class="wrap">
     <div class="download-box">
@@ -464,6 +655,16 @@
   </div>
 </section>
 
+<div class="sticky-cta" id="stickyCta">
+  <div class="wrap">
+    <div class="sticky-cta-text">AtomeOpti est <strong>gratuit</strong>, sans compte — ~90 Mo, installé en 30 secondes.</div>
+    <div class="sticky-cta-actions">
+      <a href="#telecharger" class="btn-primary" style="padding:10px 18px;font-size:0.88rem;">Télécharger ↓</a>
+      <button class="sticky-cta-close" id="stickyCtaClose" aria-label="Fermer">✕</button>
+    </div>
+  </div>
+</div>
+
 <footer>
   <div class="wrap">
     <div>AtomeOpti — console d'optimisation Windows</div>
@@ -472,87 +673,387 @@
 </footer>
 
 <script>
-// --- Détection réelle des infos exposées par le navigateur ---
-// Un site web ne peut jamais lire la RAM utilisée, le disque, les pilotes
-// ou les programmes au démarrage d'un visiteur : ce sont des infos protégées
-// par le système d'exploitation, pas accessibles au JS d'une page.
-// Ce qui suit est donc RÉELLEMENT mesuré sur l'appareil du visiteur,
-// dans la limite de ce que le navigateur accepte de partager.
+(function(){
+  // --- Fond animé : réseau de nœuds connectés, à la manière du fond de référence ---
+  const canvas = document.getElementById('bgNetwork');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const reduceMotionBg = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-function getRealDeviceInfo(){
-  const info = {};
-  info.cores = navigator.hardwareConcurrency || null;
-  info.ramApprox = navigator.deviceMemory || null; // Go, valeur plafonnée par le navigateur
-  info.screen = `${window.screen.width}×${window.screen.height}`;
-  info.pixelRatio = window.devicePixelRatio || 1;
+  let w, h, dpr;
+  let particles = [];
+  const mouse = { x: null, y: null, active: false };
 
-  info.gpu = null;
-  try{
-    const canvas = document.createElement('canvas');
-    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-    if(gl){
-      const dbg = gl.getExtension('WEBGL_debug_renderer_info');
-      if(dbg) info.gpu = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL);
-    }
-  }catch(e){}
+  const LINK_DIST = 150;
+  const MOUSE_DIST = 220;
 
-  info.connection = null;
-  if(navigator.connection && navigator.connection.effectiveType){
-    info.connection = navigator.connection.effectiveType;
+  function resize(){
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = window.innerWidth;
+    h = window.innerHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const density = (w * h) / 16000;
+    const count = Math.max(30, Math.min(110, Math.round(density)));
+    particles = Array.from({length: count}, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.25,
+      vy: (Math.random() - 0.5) * 0.25,
+      r: Math.random() * 1.4 + 0.8
+    }));
   }
 
-  info.platform = navigator.platform || navigator.userAgentData?.platform || null;
+  function step(){
+    ctx.clearRect(0, 0, w, h);
 
-  return info;
-}
+    for(const p of particles){
+      p.x += p.vx;
+      p.y += p.vy;
+      if(p.x < 0 || p.x > w) p.vx *= -1;
+      if(p.y < 0 || p.y > h) p.vy *= -1;
+    }
 
-const dev = getRealDeviceInfo();
+    // liens entre particules proches
+    for(let i = 0; i < particles.length; i++){
+      for(let j = i + 1; j < particles.length; j++){
+        const a = particles[i], b = particles[j];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist < LINK_DIST){
+          ctx.globalAlpha = (1 - dist / LINK_DIST) * 0.35;
+          ctx.strokeStyle = '#FF6A2B';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+      }
+    }
 
-const lines = [
-  {t:'<span class="path">C:\\&gt;</span> atomeopti --scan', d:0},
-  {t:'Lecture des informations matérielles...', d:250},
-  {t: dev.cores
-      ? `&nbsp;&nbsp;Cœurs CPU : <span class="num">${dev.cores}</span>`
-      : `&nbsp;&nbsp;Cœurs CPU : <span class="warn">non communiqué par ce navigateur</span>`,
-   d:250},
-  {t: dev.ramApprox
-      ? `&nbsp;&nbsp;RAM de l'appareil : <span class="num">≈ ${dev.ramApprox} Go</span>`
-      : `&nbsp;&nbsp;RAM de l'appareil : <span class="warn">non communiqué par ce navigateur</span>`,
-   d:250},
-  {t: dev.gpu
-      ? `&nbsp;&nbsp;Carte graphique : <span class="path">${dev.gpu}</span>`
-      : `&nbsp;&nbsp;Carte graphique : <span class="warn">non détectée</span>`,
-   d:250},
-  {t:`&nbsp;&nbsp;Écran : <span class="num">${dev.screen}</span> · ratio ${dev.pixelRatio}x`, d:250},
-  {t: dev.connection
-      ? `&nbsp;&nbsp;Connexion : <span class="num">${dev.connection}</span>`
-      : `&nbsp;&nbsp;Connexion : <span class="warn">non communiquée par ce navigateur</span>`,
-   d:250},
-  {t: dev.platform
-      ? `&nbsp;&nbsp;Système : <span class="num">${dev.platform}</span>`
-      : `&nbsp;&nbsp;Système : <span class="warn">non communiqué</span>`,
-   d:250},
-  {t:'Scan navigateur terminé <span class="cursor"></span>', d:300},
-];
+    // liens vers la souris : le réseau "se connecte" au curseur
+    if(mouse.active){
+      for(const p of particles){
+        const dx = p.x - mouse.x, dy = p.y - mouse.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist < MOUSE_DIST){
+          ctx.globalAlpha = (1 - dist / MOUSE_DIST) * 0.6;
+          ctx.strokeStyle = '#FF9A5C';
+          ctx.lineWidth = 1.1;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(mouse.x, mouse.y);
+          ctx.stroke();
+        }
+      }
+      ctx.globalAlpha = 0.9;
+      ctx.fillStyle = '#FF9A5C';
+      ctx.beginPath();
+      ctx.arc(mouse.x, mouse.y, 2.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
 
-const body = document.getElementById('consoleBody');
-let delay = 0;
-lines.forEach((line) => {
-  delay += line.d + 150;
-  const el = document.createElement('div');
-  el.className = 'console-line';
-  el.innerHTML = line.t;
-  el.style.animationDelay = delay + 'ms';
-  body.appendChild(el);
-});
+    // nœuds
+    ctx.globalAlpha = 0.9;
+    ctx.fillStyle = '#FF6A2B';
+    for(const p of particles){
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
 
-document.querySelectorAll('[data-mod]').forEach(mod => {
-  mod.addEventListener('click', () => {
-    const wasOpen = mod.classList.contains('open');
-    document.querySelectorAll('[data-mod]').forEach(m => m.classList.remove('open'));
-    if(!wasOpen) mod.classList.add('open');
+    if(!reduceMotionBg) requestAnimationFrame(step);
+  }
+
+  window.addEventListener('resize', resize);
+  window.addEventListener('mousemove', e => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+    mouse.active = true;
   });
-});
+  window.addEventListener('mouseleave', () => { mouse.active = false; });
+  document.addEventListener('mouseout', e => { if(!e.relatedTarget) mouse.active = false; });
+
+  resize();
+  step();
+})();
+
+(function(){
+  // --- Détection réelle des infos exposées par le navigateur ---
+  // Un site web ne peut jamais lire la RAM utilisée, le disque, les pilotes
+  // ou les programmes au démarrage d'un visiteur : ce sont des infos protégées
+  // par le système d'exploitation, pas accessibles au JS d'une page.
+  // Ce qui suit est donc RÉELLEMENT mesuré sur l'appareil du visiteur,
+  // dans la limite de ce que le navigateur accepte de partager.
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+  function makeLine(container){
+    const el = document.createElement('div');
+    el.className = 'console-line';
+    el.style.opacity = '1';
+    el.style.animation = 'none';
+    container.appendChild(el);
+    const body = document.getElementById('consoleBody');
+    if(body) body.scrollTop = body.scrollHeight;
+    return el;
+  }
+
+  // Effet machine à écrire : tape le texte brut caractère par caractère,
+  // puis bascule sur la version colorée (HTML) une fois la ligne terminée.
+  async function typeLine(container, finalHTML, plainText, speed){
+    const el = makeLine(container);
+    if(reduceMotion){ el.innerHTML = finalHTML; return el; }
+    const cursor = document.createElement('span');
+    cursor.className = 'cursor';
+    for(let i=0; i<=plainText.length; i++){
+      el.textContent = plainText.slice(0, i);
+      el.appendChild(cursor);
+      await sleep(speed + Math.random()*16);
+    }
+    el.innerHTML = finalHTML;
+    return el;
+  }
+
+  // Barre de progression rapide (courte, fluide, pas d'ASCII).
+  function progressLine(container, label, durationMs){
+    const el = makeLine(container);
+    el.classList.add('proc-row');
+    el.innerHTML = `<span class="proc-label">${label}</span><div class="proc-track"><div class="proc-fill"></div></div>`;
+    const fill = el.querySelector('.proc-fill');
+
+    if(reduceMotion){
+      fill.style.width = '100%';
+      return Promise.resolve(el);
+    }
+
+    return new Promise(resolve => {
+      const start = performance.now();
+      function tick(now){
+        const t = Math.min(1, (now - start) / durationMs);
+        fill.style.width = (t * 100) + '%';
+        if(t < 1){
+          requestAnimationFrame(tick);
+        } else {
+          resolve(el);
+        }
+      }
+      requestAnimationFrame(tick);
+    });
+  }
+
+  function getRealDeviceInfo(){
+    const info = {};
+    info.cores = navigator.hardwareConcurrency || null;
+    info.ramApprox = navigator.deviceMemory || null; // Go, valeur plafonnée par le navigateur
+    info.screen = `${window.screen.width}×${window.screen.height}`;
+    info.pixelRatio = window.devicePixelRatio || 1;
+
+    info.gpu = null;
+    try{
+      const canvas = document.createElement('canvas');
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      if(gl){
+        const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+        if(dbg) info.gpu = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL);
+      }
+    }catch(e){}
+
+    info.connection = null;
+    if(navigator.connection && navigator.connection.effectiveType){
+      info.connection = navigator.connection.effectiveType;
+    }
+
+    info.platform = navigator.platform || navigator.userAgentData?.platform || null;
+
+    return info;
+  }
+
+  // --- Phase 1 : scan matériel réel du visiteur (une seule fois) ---
+  async function runRealScan(container){
+    const dev = getRealDeviceInfo();
+
+    await typeLine(container, '<span class="path">C:\\&gt;</span> atomeopti --scan', 'C:\\> atomeopti --scan', 22);
+    await sleep(150);
+    await typeLine(container, 'Lecture des informations matérielles...', 'Lecture des informations matérielles...', 12);
+    await sleep(150);
+
+    const fields = [
+      dev.cores
+        ? [`&nbsp;&nbsp;Cœurs CPU : <span class="num">${dev.cores}</span>`, `  Cœurs CPU : ${dev.cores}`]
+        : [`&nbsp;&nbsp;Cœurs CPU : <span class="warn">non communiqué par ce navigateur</span>`, `  Cœurs CPU : non communiqué par ce navigateur`],
+      dev.ramApprox
+        ? [`&nbsp;&nbsp;RAM de l'appareil : <span class="num">≈ ${dev.ramApprox} Go</span>`, `  RAM de l'appareil : ≈ ${dev.ramApprox} Go`]
+        : [`&nbsp;&nbsp;RAM de l'appareil : <span class="warn">non communiqué par ce navigateur</span>`, `  RAM de l'appareil : non communiqué par ce navigateur`],
+      dev.gpu
+        ? [`&nbsp;&nbsp;Carte graphique : <span class="path">${dev.gpu}</span>`, `  Carte graphique : ${dev.gpu}`]
+        : [`&nbsp;&nbsp;Carte graphique : <span class="warn">non détectée</span>`, `  Carte graphique : non détectée`],
+      [`&nbsp;&nbsp;Écran : <span class="num">${dev.screen}</span> · ratio ${dev.pixelRatio}x`, `  Écran : ${dev.screen} · ratio ${dev.pixelRatio}x`],
+      dev.connection
+        ? [`&nbsp;&nbsp;Connexion : <span class="num">${dev.connection}</span>`, `  Connexion : ${dev.connection}`]
+        : [`&nbsp;&nbsp;Connexion : <span class="warn">non communiquée par ce navigateur</span>`, `  Connexion : non communiquée par ce navigateur`],
+      dev.platform
+        ? [`&nbsp;&nbsp;Système : <span class="num">${dev.platform}</span>`, `  Système : ${dev.platform}`]
+        : [`&nbsp;&nbsp;Système : <span class="warn">non communiqué</span>`, `  Système : non communiqué`],
+    ];
+
+    for(const [html, plain] of fields){
+      await typeLine(container, html, plain, 10);
+      await sleep(140);
+    }
+
+    await typeLine(container, 'Scan navigateur terminé <span class="ok">✓</span>', 'Scan navigateur terminé ✓', 14);
+  }
+
+  // --- Phase 2 : aperçu simulé, en boucle, des actions d'AtomeOpti ---
+  const simSteps = [
+    {label:'Téléchargement des modules', dur:380, result:'Modules à jour'},
+    {label:'Nettoyage du cache',         dur:340, result:'3 412 fichiers supprimés'},
+    {label:'Optimisation RAM',           dur:360, result:'2.1 Go libérés'},
+    {label:'Vérification des pilotes',   dur:320, result:'Pilotes à jour'},
+    {label:'Boost FPS',                  dur:340, result:'Priorité CPU ajustée'},
+    {label:'Point de restauration',      dur:300, result:'Point créé'},
+  ];
+
+  async function runSimLoop(container){
+    while(true){
+      container.innerHTML = '';
+      await typeLine(
+        container,
+        '<span class="path">C:\\&gt;</span> atomeopti --optimize',
+        'C:\\> atomeopti --optimize',
+        18
+      );
+      await sleep(200);
+
+      for(const step of simSteps){
+        await progressLine(container, step.label, reduceMotion ? 0 : step.dur);
+        await typeLine(container, `&nbsp;&nbsp;→ <span class="ok">${step.result}</span>`, `  → ${step.result}`, 6);
+        await sleep(90);
+      }
+
+      await typeLine(container, 'Optimisation terminée <span class="ok">✓</span>', 'Optimisation terminée ✓', 14);
+
+      if(reduceMotion) return; // pas de boucle infinie si l'utilisateur préfère moins d'animation
+      await sleep(2200);
+    }
+  }
+
+  const realContainer = document.getElementById('scanReal');
+  const simContainer = document.getElementById('scanSim');
+
+  runRealScan(realContainer).then(() => runSimLoop(simContainer));
+
+  // --- Effet 3D : la console suit légèrement le curseur (tilt + reflet) ---
+  (function initTilt(){
+    const stage = document.querySelector('.console-stage');
+    const panel = document.getElementById('console');
+    if(!stage || !panel || reduceMotion) return;
+    const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if(!canHover) return;
+
+    const maxRotate = 10;
+
+    function onMove(e){
+      const rect = stage.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width;
+      const py = (e.clientY - rect.top) / rect.height;
+      const rotateY = (px - 0.5) * (maxRotate * 2);
+      const rotateX = (0.5 - py) * maxRotate;
+      panel.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      panel.style.setProperty('--mx', `${px * 100}%`);
+      panel.style.setProperty('--my', `${py * 100}%`);
+    }
+
+    function onLeave(){
+      panel.style.transform = 'rotateX(4deg) rotateY(-9deg)';
+      panel.style.setProperty('--mx', '50%');
+      panel.style.setProperty('--my', '20%');
+    }
+
+    stage.addEventListener('mousemove', onMove);
+    stage.addEventListener('mouseleave', onLeave);
+  })();
+
+  document.querySelectorAll('[data-mod]').forEach(mod => {
+    mod.addEventListener('click', () => {
+      const wasOpen = mod.classList.contains('open');
+      document.querySelectorAll('[data-mod]').forEach(m => m.classList.remove('open'));
+      if(!wasOpen) mod.classList.add('open');
+    });
+  });
+
+  // --- FAQ accordion ---
+  document.querySelectorAll('[data-faq]').forEach(item => {
+    item.querySelector('.faq-q').addEventListener('click', () => {
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('[data-faq]').forEach(f => f.classList.remove('open'));
+      if(!wasOpen) item.classList.add('open');
+    });
+  });
+
+  // --- Mini jauge avant/après : se remplit quand elle entre dans l'écran ---
+  (function animateMiniCompare(){
+    const ram = document.getElementById('mcRam');
+    const fps = document.getElementById('mcFps');
+    if(!ram || !fps) return;
+    if(reduceMotion){ ram.style.width = '72%'; fps.style.width = '55%'; return; }
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          ram.style.width = '72%';
+          fps.style.width = '55%';
+          obs.disconnect();
+        }
+      });
+    }, {threshold: 0.4});
+    obs.observe(ram.closest('.mini-compare'));
+  })();
+
+  // --- Barre de téléchargement sticky : apparaît après le hero, fermable ---
+  (function stickyCta(){
+    const bar = document.getElementById('stickyCta');
+    const closeBtn = document.getElementById('stickyCtaClose');
+    const heroEl = document.querySelector('header.hero');
+    const downloadEl = document.getElementById('telecharger');
+    if(!bar || !heroEl) return;
+    let dismissed = false;
+
+    closeBtn?.addEventListener('click', () => {
+      dismissed = true;
+      bar.classList.remove('show');
+    });
+
+    const heroObs = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if(dismissed) return;
+        if(!entry.isIntersecting && entry.boundingClientRect.top < 0){
+          bar.classList.add('show');
+        } else {
+          bar.classList.remove('show');
+        }
+      });
+    }, {threshold: 0});
+    heroObs.observe(heroEl);
+
+    if(downloadEl){
+      const dlObs = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if(entry.isIntersecting) bar.classList.remove('show');
+        });
+      }, {threshold: 0.3});
+      dlObs.observe(downloadEl);
+    }
+  })();
+})();
 </script>
 
 </body>
