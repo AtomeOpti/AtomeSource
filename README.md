@@ -1,3 +1,4 @@
+<img width="1919" height="1028" alt="Capture d&#39;écran 2026-08-31 031239" src="https://github.com/user-attachments/assets/7f70afb5-95d3-4b2c-940a-4edca815755f" />
 # AtomeOpti
 
 AtomeOpti est une application Windows d'optimisation système (nettoyage,
