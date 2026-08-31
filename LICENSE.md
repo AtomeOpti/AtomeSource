@@ -17,7 +17,7 @@ Ne sont **pas** autorisés, sans accord écrit préalable de l'éditeur :
   d'AtomeOpti (local ou serveur) ;
 - utiliser ce code, en tout ou partie, dans un autre produit.
 
-L'application officielle, compilée et signée, est disponible uniquement via
+L'application officielle, compilée et est disponible uniquement via
 le site officiel — voir [README.md](README.md).
 
 Ce dépôt est fourni "tel quel", sans garantie d'aucune sorte.
