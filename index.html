@@ -193,7 +193,7 @@
     display:flex;justify-content:center;
   }
   .console-mini{
-    max-width:380px;width:100%;
+    max-width:460px;width:100%;
     transform:rotateX(4deg) rotateY(-9deg);
     transform-style:preserve-3d;
     transition:transform 0.5s cubic-bezier(.2,.8,.2,1), box-shadow 0.5s ease;
@@ -224,6 +224,48 @@
   }
   @media (prefers-reduced-motion: reduce){
     .console-mini{transition:none;}
+  }
+
+  /* --- Mockup codé de l'interface (recréation HTML/CSS, pas une image) --- */
+  .app-mock{display:flex;background:#0B0D17;min-height:224px;}
+  .app-mock-side{
+    flex:0 0 96px;padding:14px 7px;
+    border-right:1px solid var(--border);
+    display:flex;flex-direction:column;gap:5px;
+  }
+  .app-mock-item{
+    font-size:0.6rem;color:var(--text-dim);
+    padding:6px 7px;border-radius:6px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .app-mock-item.active{
+    background:rgba(139,92,246,0.18);color:var(--text);
+    border:1px solid rgba(139,92,246,0.4);
+  }
+  .app-mock-main{flex:1;min-width:0;padding:14px 16px;}
+  .app-mock-head{
+    font-family:'Space Grotesk';font-weight:600;font-size:0.82rem;
+    margin-bottom:14px;
+  }
+  .app-mock-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .app-mock-stat{
+    border-radius:8px;padding:9px 10px 8px;
+    border:1px solid var(--stat-color, var(--border));
+    background:rgba(255,255,255,0.02);
+  }
+  .app-mock-stat.cpu{--stat-color:#3DA9FC;}
+  .app-mock-stat.ram{--stat-color:#A78BFA;}
+  .app-mock-stat.gpu{--stat-color:#4ADE80;}
+  .app-mock-stat.disk{--stat-color:#FF6FA8;}
+  .app-mock-stat-label{display:block;font-size:0.58rem;color:var(--text-dim);margin-bottom:2px;}
+  .app-mock-stat-val{
+    display:block;font-family:'JetBrains Mono';font-weight:600;
+    font-size:1.05rem;margin-bottom:6px;color:var(--text);
+  }
+  .app-mock-bar{height:4px;border-radius:3px;background:#1B2226;overflow:hidden;}
+  .app-mock-bar-fill{height:100%;border-radius:3px;background:var(--stat-color);}
+  @media (max-width:520px){
+    .app-mock-side{display:none;}
   }
 
   /* SECTION HEADERS */
@@ -361,6 +403,7 @@
       <a href="#resultats">Résultats</a>
       <a href="#securite">Sécurité</a>
       <a href="#contenu">Contenu</a>
+      <a href="#confidentialite">Confidentialité</a>
       <a href="#faq">FAQ</a>
       <a href="#telecharger">Télécharger</a>
     </div>
@@ -396,7 +439,7 @@
 
       <div class="btn-row">
         <a href="#telecharger" class="btn-primary pulse">Télécharger AtomeOpti ↓</a>
-        <a href="#console" class="btn-ghost">Voir la console tourner</a>
+        <a href="#console" class="btn-ghost">Voir l'interface réelle</a>
         <div class="cta-meta">
           <span>📦 ~90 Mo</span>
           <span>⚡ Installation en 30 s</span>
@@ -409,11 +452,41 @@
       <div class="console console-mini" id="console">
         <div class="console-bar">
           <span></span><span></span><span></span>
-          <div class="console-title">atomeopti — scan_system.log</div>
+          <div class="console-title">AtomeOpti.exe — aperçu de l'interface</div>
         </div>
-        <div class="console-body" id="consoleBody">
-          <div id="scanReal"></div>
-          <div id="scanSim"></div>
+        <div class="app-mock">
+          <div class="app-mock-side">
+            <div class="app-mock-item active">🖥️ Accueil</div>
+            <div class="app-mock-item">🧩 Apps</div>
+            <div class="app-mock-item">🪟 Windows</div>
+            <div class="app-mock-item">🧹 Nettoyage</div>
+            <div class="app-mock-item">🚀 Démarrage</div>
+          </div>
+          <div class="app-mock-main">
+            <div class="app-mock-head">🚀 Bienvenue sur AtomeOpti</div>
+            <div class="app-mock-grid">
+              <div class="app-mock-stat cpu">
+                <span class="app-mock-stat-label">CPU</span>
+                <span class="app-mock-stat-val">23%</span>
+                <div class="app-mock-bar"><div class="app-mock-bar-fill" style="width:23%"></div></div>
+              </div>
+              <div class="app-mock-stat ram">
+                <span class="app-mock-stat-label">Mémoire</span>
+                <span class="app-mock-stat-val">66%</span>
+                <div class="app-mock-bar"><div class="app-mock-bar-fill" style="width:66%"></div></div>
+              </div>
+              <div class="app-mock-stat gpu">
+                <span class="app-mock-stat-label">GPU</span>
+                <span class="app-mock-stat-val">64%</span>
+                <div class="app-mock-bar"><div class="app-mock-bar-fill" style="width:64%"></div></div>
+              </div>
+              <div class="app-mock-stat disk">
+                <span class="app-mock-stat-label">Disque</span>
+                <span class="app-mock-stat-val">82%</span>
+                <div class="app-mock-bar"><div class="app-mock-bar-fill" style="width:82%"></div></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -602,6 +675,31 @@
   </div>
 </section>
 
+<section class="section" id="confidentialite">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">// confidentialité</div>
+      <h2>Politique de confidentialité &amp; contact.</h2>
+      <p>Site statique, sans compte, sans base de données. Voici précisément ce qui est collecté, ce qui ne l'est pas, et comment nous joindre.</p>
+    </div>
+
+    <div class="console">
+      <div class="console-bar">
+        <span></span><span></span><span></span>
+        <div class="console-title">confidentialite.md</div>
+      </div>
+      <div class="console-body" style="min-height:auto;">
+        <div class="console-line" style="animation:none;opacity:1;color:var(--text);"><strong>Sur ce site</strong></div>
+        <div class="console-line" style="animation:none;opacity:1;">Ce site est une page statique hébergée sur GitHub Pages. Il ne contient aucun formulaire, aucun compte, aucun cookie de suivi et n'installe aucun traceur publicitaire. GitHub, en tant qu'hébergeur, peut collecter des journaux techniques standards (adresse IP, user-agent) indépendamment de nous — voir la politique de GitHub pour le détail.</div>
+        <div class="console-line" style="animation:none;opacity:1;margin-top:14px;color:var(--text);"><strong>Dans l'application AtomeOpti</strong></div>
+        <div class="console-line" style="animation:none;opacity:1;">AtomeOpti ne collecte et n'envoie aucune donnée personnelle. La seule connexion réseau effectuée sert à vérifier la disponibilité de mises à jour de pilotes et de l'application elle-même — aucune donnée d'usage, aucune télémétrie, aucun identifiant n'est transmis.</div>
+        <div class="console-line" style="animation:none;opacity:1;margin-top:14px;color:var(--text);"><strong>Contact</strong></div>
+        <div class="console-line" style="animation:none;opacity:1;">Une question, un bug, une remarque sur cette politique ? Écris-nous à <a href="mailto:thxubutno@protonmail.com" style="color:var(--blue);text-decoration:underline;">thxubutno@protonmail.com</a>.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="section" id="faq">
   <div class="wrap">
     <div class="section-head">
@@ -668,6 +766,7 @@
 <footer>
   <div class="wrap">
     <div>AtomeOpti — console d'optimisation Windows</div>
+    <div><a href="#confidentialite" style="text-decoration:underline;">Confidentialité</a> · <a href="mailto:thxubutno@protonmail.com" style="text-decoration:underline;">thxubutno@protonmail.com</a></div>
     <div>Sans compte. Sans abonnement caché.</div>
   </div>
 </footer>
@@ -785,172 +884,7 @@
 })();
 
 (function(){
-  // --- Détection réelle des infos exposées par le navigateur ---
-  // Un site web ne peut jamais lire la RAM utilisée, le disque, les pilotes
-  // ou les programmes au démarrage d'un visiteur : ce sont des infos protégées
-  // par le système d'exploitation, pas accessibles au JS d'une page.
-  // Ce qui suit est donc RÉELLEMENT mesuré sur l'appareil du visiteur,
-  // dans la limite de ce que le navigateur accepte de partager.
-
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
-
-  function makeLine(container){
-    const el = document.createElement('div');
-    el.className = 'console-line';
-    el.style.opacity = '1';
-    el.style.animation = 'none';
-    container.appendChild(el);
-    const body = document.getElementById('consoleBody');
-    if(body) body.scrollTop = body.scrollHeight;
-    return el;
-  }
-
-  // Effet machine à écrire : tape le texte brut caractère par caractère,
-  // puis bascule sur la version colorée (HTML) une fois la ligne terminée.
-  async function typeLine(container, finalHTML, plainText, speed){
-    const el = makeLine(container);
-    if(reduceMotion){ el.innerHTML = finalHTML; return el; }
-    const cursor = document.createElement('span');
-    cursor.className = 'cursor';
-    for(let i=0; i<=plainText.length; i++){
-      el.textContent = plainText.slice(0, i);
-      el.appendChild(cursor);
-      await sleep(speed + Math.random()*16);
-    }
-    el.innerHTML = finalHTML;
-    return el;
-  }
-
-  // Barre de progression rapide (courte, fluide, pas d'ASCII).
-  function progressLine(container, label, durationMs){
-    const el = makeLine(container);
-    el.classList.add('proc-row');
-    el.innerHTML = `<span class="proc-label">${label}</span><div class="proc-track"><div class="proc-fill"></div></div>`;
-    const fill = el.querySelector('.proc-fill');
-
-    if(reduceMotion){
-      fill.style.width = '100%';
-      return Promise.resolve(el);
-    }
-
-    return new Promise(resolve => {
-      const start = performance.now();
-      function tick(now){
-        const t = Math.min(1, (now - start) / durationMs);
-        fill.style.width = (t * 100) + '%';
-        if(t < 1){
-          requestAnimationFrame(tick);
-        } else {
-          resolve(el);
-        }
-      }
-      requestAnimationFrame(tick);
-    });
-  }
-
-  function getRealDeviceInfo(){
-    const info = {};
-    info.cores = navigator.hardwareConcurrency || null;
-    info.ramApprox = navigator.deviceMemory || null; // Go, valeur plafonnée par le navigateur
-    info.screen = `${window.screen.width}×${window.screen.height}`;
-    info.pixelRatio = window.devicePixelRatio || 1;
-
-    info.gpu = null;
-    try{
-      const canvas = document.createElement('canvas');
-      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-      if(gl){
-        const dbg = gl.getExtension('WEBGL_debug_renderer_info');
-        if(dbg) info.gpu = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL);
-      }
-    }catch(e){}
-
-    info.connection = null;
-    if(navigator.connection && navigator.connection.effectiveType){
-      info.connection = navigator.connection.effectiveType;
-    }
-
-    info.platform = navigator.platform || navigator.userAgentData?.platform || null;
-
-    return info;
-  }
-
-  // --- Phase 1 : scan matériel réel du visiteur (une seule fois) ---
-  async function runRealScan(container){
-    const dev = getRealDeviceInfo();
-
-    await typeLine(container, '<span class="path">C:\\&gt;</span> atomeopti --scan', 'C:\\> atomeopti --scan', 22);
-    await sleep(150);
-    await typeLine(container, 'Lecture des informations matérielles...', 'Lecture des informations matérielles...', 12);
-    await sleep(150);
-
-    const fields = [
-      dev.cores
-        ? [`&nbsp;&nbsp;Cœurs CPU : <span class="num">${dev.cores}</span>`, `  Cœurs CPU : ${dev.cores}`]
-        : [`&nbsp;&nbsp;Cœurs CPU : <span class="warn">non communiqué par ce navigateur</span>`, `  Cœurs CPU : non communiqué par ce navigateur`],
-      dev.ramApprox
-        ? [`&nbsp;&nbsp;RAM de l'appareil : <span class="num">≈ ${dev.ramApprox} Go</span>`, `  RAM de l'appareil : ≈ ${dev.ramApprox} Go`]
-        : [`&nbsp;&nbsp;RAM de l'appareil : <span class="warn">non communiqué par ce navigateur</span>`, `  RAM de l'appareil : non communiqué par ce navigateur`],
-      dev.gpu
-        ? [`&nbsp;&nbsp;Carte graphique : <span class="path">${dev.gpu}</span>`, `  Carte graphique : ${dev.gpu}`]
-        : [`&nbsp;&nbsp;Carte graphique : <span class="warn">non détectée</span>`, `  Carte graphique : non détectée`],
-      [`&nbsp;&nbsp;Écran : <span class="num">${dev.screen}</span> · ratio ${dev.pixelRatio}x`, `  Écran : ${dev.screen} · ratio ${dev.pixelRatio}x`],
-      dev.connection
-        ? [`&nbsp;&nbsp;Connexion : <span class="num">${dev.connection}</span>`, `  Connexion : ${dev.connection}`]
-        : [`&nbsp;&nbsp;Connexion : <span class="warn">non communiquée par ce navigateur</span>`, `  Connexion : non communiquée par ce navigateur`],
-      dev.platform
-        ? [`&nbsp;&nbsp;Système : <span class="num">${dev.platform}</span>`, `  Système : ${dev.platform}`]
-        : [`&nbsp;&nbsp;Système : <span class="warn">non communiqué</span>`, `  Système : non communiqué`],
-    ];
-
-    for(const [html, plain] of fields){
-      await typeLine(container, html, plain, 10);
-      await sleep(140);
-    }
-
-    await typeLine(container, 'Scan navigateur terminé <span class="ok">✓</span>', 'Scan navigateur terminé ✓', 14);
-  }
-
-  // --- Phase 2 : aperçu simulé, en boucle, des actions d'AtomeOpti ---
-  const simSteps = [
-    {label:'Téléchargement des modules', dur:380, result:'Modules à jour'},
-    {label:'Nettoyage du cache',         dur:340, result:'3 412 fichiers supprimés'},
-    {label:'Optimisation RAM',           dur:360, result:'2.1 Go libérés'},
-    {label:'Vérification des pilotes',   dur:320, result:'Pilotes à jour'},
-    {label:'Boost FPS',                  dur:340, result:'Priorité CPU ajustée'},
-    {label:'Point de restauration',      dur:300, result:'Point créé'},
-  ];
-
-  async function runSimLoop(container){
-    while(true){
-      container.innerHTML = '';
-      await typeLine(
-        container,
-        '<span class="path">C:\\&gt;</span> atomeopti --optimize',
-        'C:\\> atomeopti --optimize',
-        18
-      );
-      await sleep(200);
-
-      for(const step of simSteps){
-        await progressLine(container, step.label, reduceMotion ? 0 : step.dur);
-        await typeLine(container, `&nbsp;&nbsp;→ <span class="ok">${step.result}</span>`, `  → ${step.result}`, 6);
-        await sleep(90);
-      }
-
-      await typeLine(container, 'Optimisation terminée <span class="ok">✓</span>', 'Optimisation terminée ✓', 14);
-
-      if(reduceMotion) return; // pas de boucle infinie si l'utilisateur préfère moins d'animation
-      await sleep(2200);
-    }
-  }
-
-  const realContainer = document.getElementById('scanReal');
-  const simContainer = document.getElementById('scanSim');
-
-  runRealScan(realContainer).then(() => runSimLoop(simContainer));
 
   // --- Effet 3D : la console suit légèrement le curseur (tilt + reflet) ---
   (function initTilt(){
